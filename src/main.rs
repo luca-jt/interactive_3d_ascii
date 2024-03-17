@@ -7,6 +7,7 @@ pub use crate::geo_objects::*;
 pub mod util_funcs;
 pub use crate::util_funcs::*;
 use crossterm::{cursor, execute};
+use std::f32::consts::PI;
 use std::io::stdout;
 
 
@@ -37,8 +38,10 @@ fn main()
         
         // listen for input
         // change vars according to input
-        // get points to draw
-        // calculate their rotations
+        
+        let mut points_to_draw = Torus::get_points_to_draw(&torus, PI / 10.0, PI / 10.0);
+
+        // calculate point rotations
         // filter the points that are out of bounds
         // map the points to the screen grid using buffers + textures + surface normal
 
