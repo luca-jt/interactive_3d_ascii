@@ -6,6 +6,7 @@ pub struct Hedron
     coordinates: Vec<Vec<f32>>
 }
 
+
 pub struct Sphere
 {
     radius: f32,
@@ -13,6 +14,7 @@ pub struct Sphere
     pos_y: f32,
     pos_z: f32
 }
+
 
 pub struct Torus
 {
@@ -30,7 +32,6 @@ impl Torus
 
     pub fn get_points_to_draw(torus: &Torus, d_theta: f32, d_phi: f32) -> Vec<Vec<f32>>
     {
-        // TODO: filter the elements that are out of bounds
         let mut points: Vec<Vec<f32>> = Vec::new();
         let mut loop_counter: u32 = 0;
         let mut curr_theta: f32 = 0.0;
