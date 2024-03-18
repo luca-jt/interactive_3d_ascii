@@ -17,6 +17,9 @@ impl Hedron
     {
         let mut points: Vec<Vec<f32>> = Vec::new();
 
+        points = hedron.coordinates.clone();
+        // TODO: remove ^^^^^^^^^^^^^^^^^^^^
+
         points
     }
 }
@@ -54,8 +57,11 @@ impl Sphere
             {
                 phi = (d_phi * inner_loops as f32) % PI;
 
-                let curr_draw_point: Vec<f32> = vec![];
-                // TODO ------------------------^^^^^^
+                let curr_draw_point: Vec<f32> = vec![
+                    sphere.px + sphere.radius * theta.cos() * phi.cos(),
+                    sphere.py - sphere.radius * phi.sin() * theta.cos(),
+                    sphere.pz + sphere.radius * theta.sin()
+                ];
 
                 points.push(curr_draw_point);
                 inner_loops = inner_loops.wrapping_add(1);

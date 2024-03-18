@@ -12,9 +12,9 @@ use std::io::stdout;
 
 
 const SCREEN_W: usize = 64;
-const SCREEN_H: usize = 24;
+const SCREEN_H: usize = 32;
 const FPS: u8 = 60;
-const RENDER_SPACE_SIZE: f32 = 50.0; // 100x100x100 | (50,50,50) ist maximale Auslenkung
+const RENDER_SPACE_SIZE: f32 = 50.0; // 100x100x100 | (50,50,50) is max distance
 const DISTANCE_FROM_SCREEN: u32 = 10; // change that to your liking
 const TEXTURE: &'static str = ".-:,=;<+!c*z?svilu2SwkP694OGAXH8R#$B0M%@";
 const LIGHT_SRC: [f32; 3] = [RENDER_SPACE_SIZE, RENDER_SPACE_SIZE, RENDER_SPACE_SIZE];
