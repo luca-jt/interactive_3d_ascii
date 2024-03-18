@@ -33,6 +33,23 @@ pub fn space_pressed() -> bool
 }
 
 
+pub fn e_pressed() -> bool
+{
+    loop
+    {
+        if event::poll(Duration::from_millis(10)).unwrap() {
+            if let Event::Key(KeyEvent { code, .. }) = event::read().unwrap() {
+                if code == KeyCode::Char('e').into() {
+                    return true;
+                }
+            }
+        }
+        break;
+    }
+    false
+}
+
+
 pub fn pause()
 {
     let mut out = stdout();
