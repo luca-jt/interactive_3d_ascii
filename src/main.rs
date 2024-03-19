@@ -32,7 +32,7 @@ fn main()
     let torus: Torus = Torus::new(10.0, 3.0, 0.0, 0.0, 0.0);
     let torus_points = Torus::get_points_to_draw(&torus, PI / 10.0, PI / 20.0);
     let hedron: Tetrahedron = Tetrahedron::new(vec![vec![], vec![], vec![]]);
-    let hedron_points = Tetrahedron::get_points_to_draw(&hedron);
+    let hedron_points = Tetrahedron::get_points_to_draw(&hedron, 50);
     let shpere: Sphere = Sphere::new(10.0, 0.0, 0.0, 0.0);
     let sphere_points = Sphere::get_points_to_draw(&shpere, PI / 20.0, PI / 20.0);
     let all_points: Vec<Vec<Vec<f32>>> = vec![torus_points, hedron_points, sphere_points];
