@@ -1,24 +1,27 @@
 use std::f32::consts::PI;
 
 
-pub struct Hedron
+pub struct Tetrahedron
 {
     coordinates: Vec<Vec<f32>>
 }
 
-impl Hedron
+impl Tetrahedron
 {
-    pub fn new(coordinates: Vec<Vec<f32>>) -> Hedron
+    pub fn new(coordinates: Vec<Vec<f32>>) -> Tetrahedron
     {
-        Hedron { coordinates }
+        Tetrahedron { coordinates }
     }
 
-    pub fn get_points_to_draw(hedron: &Hedron) -> Vec<Vec<f32>>
+    pub fn get_points_to_draw(hedron: &Tetrahedron) -> Vec<Vec<f32>>
     {
         let mut points: Vec<Vec<f32>> = Vec::new();
 
         points = hedron.coordinates.clone();
         // TODO: remove ^^^^^^^^^^^^^^^^^^^^
+        // start punkt wählen und anliegende flächen sich anschauen -> alle kombinationen von punktepartnern
+        // gegenüberliegende fläche betrachten
+        // punkte gleichmäßig verteilt -> skizze
 
         points
     }
