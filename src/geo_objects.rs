@@ -1,4 +1,46 @@
-use std::f32::consts::PI;
+use std::{f32::consts::PI, ops::Add};
+
+
+trait VecMethods<T>
+{
+    fn add(&self, other: &Vec<T>) -> Option<Vec<T>>;
+    fn dot_p(&self, other: &Vec<T>) -> Option<T>;
+}
+
+impl<T: std::ops::AddAssign + Copy + Add<Output = T> + Default> VecMethods<T> for Vec<T>
+{
+    fn add(&self, other: &Vec<T>) -> Option<Vec<T>>
+    {
+        if self.len() != other.len()
+        {
+            return None;
+        }
+
+        let mut res: Vec<T> = Vec::new();
+        for i in 0..self.len()
+        {
+            res.push(self[i]);
+            res[i] += other[i];
+        }
+        Some(res)
+    }
+
+    fn dot_p(&self, other: &Vec<T>) -> Option<T>
+    {
+        if self.len() != other.len()
+        {
+            return None;
+        }
+
+        let mut res: T = T::default();
+        
+        for i in 0..self.len()
+        {
+            res += self[i] + other[i];
+        }
+        Some(res)
+    }
+}
 
 
 fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<f32>>
