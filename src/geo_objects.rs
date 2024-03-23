@@ -6,12 +6,14 @@ fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<
 {
     let mut points: Vec<Vec<f32>> = verteces.clone();
 
-    let start = &points[0];
-    // punkte gleichmäßig verteilt auf schnekeln vom start aus
-    // querparallellinien ziehen
-    // in gleichmäßigen abständen punkte hinzufügen (auch letzte reihe beachten)
+    // Edge 1:
+    let g1 = &verteces[1].sub(&verteces[0]).unwrap();
+    let slice_width1 = g1.norm().unwrap() / num_of_parts as f32;
+    // Edge 2:
+    let g2 = &verteces[2].sub(&verteces[0]).unwrap();
+    let slice_width2 = g2.norm().unwrap() / num_of_parts as f32;
 
-    // let slice_width = 
+    // querlinien ziehen und punkte darauf points hinzufügen (1 for loop), (letzte reihe beachten)
 
     points
 }
