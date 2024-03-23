@@ -1,46 +1,5 @@
-use std::{f32::consts::PI, ops::Add};
-
-
-trait VecMethods<T>
-{
-    fn add(&self, other: &Vec<T>) -> Option<Vec<T>>;
-    fn dot_p(&self, other: &Vec<T>) -> Option<T>;
-}
-
-impl<T: std::ops::AddAssign + Copy + Add<Output = T> + Default> VecMethods<T> for Vec<T>
-{
-    fn add(&self, other: &Vec<T>) -> Option<Vec<T>>
-    {
-        if self.len() != other.len()
-        {
-            return None;
-        }
-
-        let mut res: Vec<T> = Vec::new();
-        for i in 0..self.len()
-        {
-            res.push(self[i]);
-            res[i] += other[i];
-        }
-        Some(res)
-    }
-
-    fn dot_p(&self, other: &Vec<T>) -> Option<T>
-    {
-        if self.len() != other.len()
-        {
-            return None;
-        }
-
-        let mut res: T = T::default();
-        
-        for i in 0..self.len()
-        {
-            res += self[i] + other[i];
-        }
-        Some(res)
-    }
-}
+use std::f32::consts::PI;
+pub use crate::vec_methods::*;
 
 
 fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<f32>>
@@ -48,9 +7,11 @@ fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<
     let mut points: Vec<Vec<f32>> = verteces.clone();
 
     let start = &points[0];
-    // TODO: implement vector arithmetic trait
-    // punkte gleichmäßig verteilt -> skizze
-    //let slice_width = 
+    // punkte gleichmäßig verteilt auf schnekeln vom start aus
+    // querparallellinien ziehen
+    // in gleichmäßigen abständen punkte hinzufügen (auch letzte reihe beachten)
+
+    // let slice_width = 
 
     points
 }
@@ -58,28 +19,30 @@ fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<
 
 pub struct Tetrahedron
 {
-    coordinates: Vec<Vec<f32>>
+    pos1: Vec<f32>,
+    pos2: Vec<f32>,
+    pos3: Vec<f32>,
+    pos4: Vec<f32>
 }
 
 impl Tetrahedron
 {
-    pub fn new(coordinates: Vec<Vec<f32>>) -> Tetrahedron
+    pub fn new(pos1: Vec<f32>, pos2: Vec<f32>, pos3: Vec<f32>, pos4: Vec<f32>) -> Tetrahedron
     {
-        Tetrahedron { coordinates }
+        Tetrahedron { pos1, pos2, pos3, pos4 }
     }
 
-    pub fn get_points_to_draw(hedron: &Tetrahedron, num_of_parts: u32) -> Vec<Vec<f32>>
+    pub fn get_points_to_draw(h: &Tetrahedron, num_of_parts: u32) -> Vec<Vec<f32>>
     {
         let mut points: Vec<Vec<f32>> = Vec::new();
-        let coords = hedron.coordinates.clone();
 
-        let triangle1 = vec![coords[0].clone(), coords[1].clone(), coords[2].clone()];
+        let triangle1 = vec![h.pos1.clone(), h.pos2.clone(), h.pos3.clone()];
         points.append(&mut calc_triangle_points(&triangle1, num_of_parts));
-        let triangle2 = vec![coords[0].clone(), coords[1].clone(), coords[3].clone()];
+        let triangle2 = vec![h.pos1.clone(), h.pos2.clone(), h.pos4.clone()];
         points.append(&mut calc_triangle_points(&triangle2, num_of_parts));
-        let triangle3 = vec![coords[0].clone(), coords[2].clone(), coords[3].clone()];
+        let triangle3 = vec![h.pos1.clone(), h.pos3.clone(), h.pos4.clone()];
         points.append(&mut calc_triangle_points(&triangle3, num_of_parts));
-        let triangle4 = vec![coords[1].clone(), coords[2].clone(), coords[2].clone()];
+        let triangle4 = vec![h.pos2.clone(), h.pos3.clone(), h.pos4.clone()];
         points.append(&mut calc_triangle_points(&triangle4, num_of_parts));
 
         points
