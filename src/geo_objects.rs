@@ -13,7 +13,18 @@ fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<
     let g2 = &verteces[2].sub(&verteces[0]).unwrap();
     let slice_width2 = g2.norm().unwrap() / num_of_parts as f32;
 
-    // querlinien ziehen und punkte darauf points hinzufügen (1 for loop), (letzte reihe beachten)
+    let mut i = 1;
+    while i <= num_of_parts
+    {
+        let point1 = &verteces[0].add(&g1.normalize().unwrap().mult(i as f32 * slice_width1));
+        let point2 = &verteces[0].add(&g2.normalize().unwrap().mult(i as f32 * slice_width2));
+        
+        // querlinien ziehen von 1 zu 2
+
+        // punkte darauf points hinzufügen
+
+        i += 1;
+    }
 
     points
 }
