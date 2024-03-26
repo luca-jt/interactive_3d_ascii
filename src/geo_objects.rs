@@ -16,16 +16,23 @@ fn calc_triangle_points(verteces: &Vec<Vec<f32>>, num_of_parts: u32) -> Vec<Vec<
     let mut i = 1;
     while i <= num_of_parts
     {
-        let point1 = &verteces[0].add(&g1.normalize().unwrap().mult(i as f32 * slice_width1));
-        let point2 = &verteces[0].add(&g2.normalize().unwrap().mult(i as f32 * slice_width2));
+        let point1 = &verteces[0].add(&g1.normalize().unwrap().mult(i as f32 * slice_width1)).unwrap();
+        let point2 = &verteces[0].add(&g2.normalize().unwrap().mult(i as f32 * slice_width2)).unwrap();
         
-        // querlinien ziehen von 1 zu 2
+        // draw qvector from point 1 to point 2
+        let qline = point2.sub(point1).unwrap();
+        let q_slice_width = qline.norm().unwrap() / (i + 1) as f32;
 
-        // punkte darauf points hinzufügen
-
+        // add points p to "points"
+        let mut j = 0;
+        while j < i + 1
+        {
+            let p = point1.add(&qline.normalize().unwrap().mult(j as f32 * q_slice_width)).unwrap();
+            points.push(p);
+            j += 1;
+        }
         i += 1;
     }
-
     points
 }
 
