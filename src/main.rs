@@ -16,7 +16,7 @@ const SCREEN_W: usize = 64;
 const SCREEN_H: usize = 32;
 const FPS: u8 = 60;
 const RENDER_SPACE_SIZE: f32 = 50.0; // 100x100x100 | (50,50,50) is max distance
-const DISTANCE_FROM_SCREEN: u32 = 10; // change that to your liking
+const SCREEN_DISTANCE: f32 = 10.0; // change that to your liking
 const TEXTURE: &'static str = ".-:,=;<+!c*z?svilu2SwkP694OGAXH8R#$B0M%@";
 const LIGHT_SRC: [f32; 3] = [RENDER_SPACE_SIZE, RENDER_SPACE_SIZE, RENDER_SPACE_SIZE];
 
@@ -66,7 +66,15 @@ fn main()
                                                 && p[2] >= -RENDER_SPACE_SIZE)
                                             .collect();
 
-        // map the points to the screen grid using buffers + textures + surface normal
+        for ptd in points_to_draw
+        {
+            let mapped_point: Vec<f32> = vec![
+                f32::round(SCREEN_DISTANCE * ptd[0] / ptd[2]),
+                f32::round(SCREEN_DISTANCE * ptd[1] / ptd[2])
+                ];
+                
+            // map the points to the screen grid using buffers + textures + surface normal
+        }
 
         print_screen(&frame_buffer);
         clear_frame_buffer(&mut frame_buffer);
