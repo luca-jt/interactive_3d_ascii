@@ -15,7 +15,7 @@ pub mod vec_methods;
 const SCREEN_W: usize = 64;
 const SCREEN_H: usize = 32;
 const FPS: u8 = 60;
-const RENDER_SPACE_SIZE: f32 = 50.0; // 100x100x100 | (50,50,50) is max distance
+const RENDER_SPACE_SIZE: f32 = 100.0; // 100x100x100 | (100,100,100) is max distance | only positive coords
 const SCREEN_DISTANCE: f32 = 10.0; // change that to your liking
 const TEXTURE: &'static str = ".-:,=;<+!c*z?svilu2SwkP694OGAXH8R#$B0M%@";
 const LIGHT_SRC: [f32; 3] = [RENDER_SPACE_SIZE, RENDER_SPACE_SIZE, RENDER_SPACE_SIZE];
@@ -25,7 +25,7 @@ fn main()
 {
     let mut capper = FpsCapper::new(FPS);
     let mut frame_buffer: Vec<Vec<char>> = vec![vec![' '; SCREEN_W]; SCREEN_H];
-    let mut z_buffer: Vec<Vec<f32>> = vec![vec![0.0 as f32; SCREEN_W]; SCREEN_H]; // use 1/z !
+    let mut z_buffer: Vec<f32> = vec![0.0 as f32; SCREEN_W * SCREEN_H]; // use 1/z !
     let mut a: f32 = 0.0; // manage change in rotation
     let mut b: f32 = 0.0; // "
     let mut c: f32 = 0.0; // "
@@ -59,21 +59,30 @@ fn main()
                                             .into_iter()
                                             .filter(|p| 
                                                    p[0] <= RENDER_SPACE_SIZE
-                                                && p[0] >= -RENDER_SPACE_SIZE
+                                                && p[0] >= 0.0
                                                 && p[1] <= RENDER_SPACE_SIZE
-                                                && p[1] >= -RENDER_SPACE_SIZE
+                                                && p[1] >= 0.0
                                                 && p[2] <= RENDER_SPACE_SIZE
-                                                && p[2] >= -RENDER_SPACE_SIZE)
+                                                && p[2] >= 0.0)
                                             .collect();
 
         for ptd in points_to_draw
         {
-            let mapped_point: Vec<f32> = vec![
-                f32::round(SCREEN_DISTANCE * ptd[0] / ptd[2]),
-                f32::round(SCREEN_DISTANCE * ptd[1] / ptd[2])
-                ];
-                
-            // map the points to the screen grid using buffers + textures + surface normal
+            let z_inv = 1.0 / ptd[2];
+            // mapped point: (x_entry, y_entry)
+            let x_entry = f32::round(SCREEN_DISTANCE * ptd[0] * z_inv) as usize;
+            let y_entry = f32::round(SCREEN_DISTANCE * ptd[1] * z_inv) as usize;
+            let buffer_index = x_entry + y_entry * SCREEN_W;
+
+            if x_entry > SCREEN_W-1 || y_entry > SCREEN_H-1 || z_buffer[buffer_index] >= z_inv
+            {
+                continue;
+            }
+            z_buffer[buffer_index] = z_inv;
+            
+            let point_texture = TEXTURE.chars().nth(0).unwrap();
+            // TODO: surface normal texture index ^^^^
+            frame_buffer[y_entry][x_entry] = point_texture;
         }
 
         print_screen(&frame_buffer);

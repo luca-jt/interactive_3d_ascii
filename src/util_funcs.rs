@@ -71,13 +71,10 @@ pub fn clear_frame_buffer(buffer: &mut Vec<Vec<char>>)
 }
 
 
-pub fn clear_z_buffer(buffer: &mut Vec<Vec<f32>>)
+pub fn clear_z_buffer(buffer: &mut Vec<f32>)
 {
-    for row in buffer.iter_mut()
+    for entry in buffer.iter_mut()
     {
-        for f in row.iter_mut()
-        {
-            *f = 0.0;
-        }
+        *entry = 0.0;
     }
 }
