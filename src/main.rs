@@ -8,39 +8,40 @@ pub mod util_funcs;
 pub use crate::util_funcs::*;
 use crossterm::{cursor, execute};
 use std::f32::consts::PI;
+use std::f32::EPSILON;
 use std::io::stdout;
 pub mod vec_methods;
 
 
-const SCREEN_W: usize = 64;
-const SCREEN_H: usize = 32;
+const SCREEN_SIZE: usize = 64;
 const FPS: u8 = 60;
-const RENDER_SPACE_SIZE: f32 = 100.0; // 100x100x100 | (100,100,100) is max distance | only positive coords
-const SCREEN_DISTANCE: f32 = 10.0; // change that to your liking
+const SCREEN_DISTANCE: f32 = 15.0;
+const OBJ_DISTANCE: f32 = 20.0;
 const TEXTURE: &'static str = ".-=;+!*SX#$@";
-const LIGHT_SRC: [f32; 3] = [RENDER_SPACE_SIZE, RENDER_SPACE_SIZE, RENDER_SPACE_SIZE];
+const LIGHT_SRC: [f32; 3] = [100.0, 100.0, 100.0];
 
 
 fn main()
 {
     let mut capper = FpsCapper::new(FPS);
-    let mut frame_buffer: Vec<Vec<char>> = vec![vec![' '; SCREEN_W]; SCREEN_H];
-    let mut z_buffer: Vec<f32> = vec![0.0 as f32; SCREEN_W * SCREEN_H]; // use 1/z !
-    let mut a: f32 = 0.0; // manage change in rotation
-    let mut b: f32 = 0.0; // "
-    let mut c: f32 = 0.0; // "
+    let mut frame_buffer: Vec<Vec<char>> = vec![vec![' '; SCREEN_SIZE]; SCREEN_SIZE];
+    let mut z_buffer: Vec<f32> = vec![0.0 as f32; SCREEN_SIZE * SCREEN_SIZE]; // uses 1/z
 
-    let torus: Torus = Torus::new(30.0, 5.0, 50.0, 50.0, 50.0);
-    let torus_points = Torus::get_points_to_draw(&torus, PI / 10.0, PI / 20.0);
+    let mut a: f32 = 0.0; // manage change in rotation
+    let mut b: f32 = 0.0;
+    let mut c: f32 = 0.0;
+
+    let torus: Torus = Torus::new(10.0, 2.0, 5.0, 5.0, 5.0);
+    let torus_points = Torus::get_points_to_draw(&torus, PI / 50.0, PI / 50.0);
     let hedron: Tetrahedron = Tetrahedron::new(
-        vec![50.0, 60.0, 50.0],
-        vec![50.0, 20.0, 20.0],
-        vec![20.0, 20.0, 80.0],
-        vec![80.0, 20.0, 80.0]
+        vec![0.0    , 10.0  , 0.0],
+        vec![0.0    , -10.0 , 10.0],
+        vec![-10.0  , -10.0 , -10.0],
+        vec![10.0   , -10.0 , -10.0]
     );
     let hedron_points = Tetrahedron::get_points_to_draw(&hedron, 50);
-    let shpere: Sphere = Sphere::new(10.0, 50.0, 50.0, 50.0);
-    let sphere_points = Sphere::get_points_to_draw(&shpere, PI / 20.0, PI / 20.0);
+    let shpere: Sphere = Sphere::new(15.0, 5.0, 5.0, 5.0);
+    let sphere_points = Sphere::get_points_to_draw(&shpere, PI / 50.0, PI / 50.0);
     let all_points: Vec<Vec<Vec<f32>>> = vec![torus_points, hedron_points, sphere_points];
 
     let mut figure_change_counter: usize = 0;
@@ -60,42 +61,36 @@ fn main()
             points_of_curr_obj = all_points[figure_change_counter].clone();
         }
 
-        let points_to_draw: Vec<Vec<f32>> = calc_rotation(&points_of_curr_obj, a, b, c)
-                                            .into_iter()
-                                            .filter(|p| 
-                                                   p[0] <= RENDER_SPACE_SIZE
-                                                && p[0] >= 0.0
-                                                && p[1] <= RENDER_SPACE_SIZE
-                                                && p[1] >= 0.0
-                                                && p[2] <= RENDER_SPACE_SIZE
-                                                && p[2] >= 0.0)
-                                            .collect();
+        let points_to_draw: Vec<Vec<f32>> = calc_rotation(&points_of_curr_obj, a, b, c);
 
         for ptd in points_to_draw
         {
-            let z_inv = 1.0 / ptd[2];
-            // mapped point: (x_entry, y_entry)
-            let x_entry = f32::round(SCREEN_DISTANCE * ptd[0] * z_inv) as usize;
-            let y_entry = f32::round(SCREEN_DISTANCE * ptd[1] * z_inv) as usize;
-            let buffer_index = x_entry + y_entry * SCREEN_W;
+            if ptd[2] + OBJ_DISTANCE < EPSILON { continue; }
 
-            if x_entry > SCREEN_W-1 || y_entry > SCREEN_H-1 || z_buffer[buffer_index] >= z_inv
-            {
-                continue;
-            }
+            let z_inv: f32 = 1.0 / (ptd[2] + OBJ_DISTANCE);
+            let x_projected: f32 = (SCREEN_SIZE / 2) as f32 + SCREEN_DISTANCE * ptd[0] * z_inv;
+            let y_projected: f32 = (SCREEN_SIZE / 2) as f32 - SCREEN_DISTANCE * ptd[1] * z_inv;
+            let x_idx: usize = f32::round(x_projected) as usize;
+            let y_idx: usize = f32::round(y_projected) as usize;
+
+            if x_idx >= SCREEN_SIZE || y_idx >= SCREEN_SIZE { continue; }
+
+            let buffer_index: usize = x_idx + y_idx * SCREEN_SIZE;
+            if z_inv <= z_buffer[buffer_index] { continue; }
+
             z_buffer[buffer_index] = z_inv;
-            
+
             let point_texture = TEXTURE.chars().nth(11).unwrap();
             // TODO: surface normal texture index ^^^^
-            frame_buffer[y_entry][x_entry] = point_texture;
+            frame_buffer[y_idx][x_idx] = point_texture;
         }
 
         print_screen(&frame_buffer);
         clear_frame_buffer(&mut frame_buffer);
         clear_z_buffer(&mut z_buffer);
-        a += 0.01;
-        b += 0.01;
-        c += 0.01;
+        a += 0.02;
+        b += 0.02;
+        c += 0.02;
 
         FpsCapper::cap_fps(&mut capper);
         if space_pressed() { running = false; }
