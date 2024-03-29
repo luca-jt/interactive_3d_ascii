@@ -96,12 +96,8 @@ impl Sphere
 
         while outer_loops == 0 || theta != 0.0
         {
-            theta = (d_theta * outer_loops as f32) % PI;
-
             while inner_loops == 0 || phi != 0.0
             {
-                phi = (d_phi * inner_loops as f32) % PI;
-
                 let curr_draw_point: Vec<f32> = vec![
                     sphere.px + sphere.radius * theta.cos() * phi.cos(),
                     sphere.py - sphere.radius * phi.sin() * theta.cos(),
@@ -110,9 +106,13 @@ impl Sphere
 
                 points.push(curr_draw_point);
                 inner_loops = inner_loops.wrapping_add(1);
+
+                phi = (d_phi * inner_loops as f32) % PI;
             }
             inner_loops = 0;
             outer_loops = outer_loops.wrapping_add(1);
+
+            theta = (d_theta * outer_loops as f32) % PI;
         }
 
         points
@@ -150,12 +150,8 @@ impl Torus
 
         while outer_loops == 0 || theta != 0.0
         {
-            theta = (d_theta * outer_loops as f32) % PI;
-
             while inner_loops == 0 || phi != 0.0
             {
-                phi = (d_phi * inner_loops as f32) % PI;
-
                 let curr_draw_point: Vec<f32> = vec![
                                         (r2 + r1 * theta.cos() + torus.p1) * phi.cos() - torus.p3 * phi.sin(),
                                         r1 * theta.sin() + torus.p2,
@@ -164,9 +160,13 @@ impl Torus
 
                 points.push(curr_draw_point);
                 inner_loops = inner_loops.wrapping_add(1);
+
+                phi = (d_phi * inner_loops as f32) % PI;
             }
             inner_loops = 0;
             outer_loops = outer_loops.wrapping_add(1);
+
+            theta = (d_theta * outer_loops as f32) % PI;
         }
 
         points
