@@ -1,4 +1,5 @@
 use std::f32::consts::PI;
+
 pub use crate::vec_methods::*;
 
 
@@ -94,9 +95,9 @@ impl Sphere
         let mut inner_loops: u32 = 0;
         let mut phi: f32 = 0.0;
 
-        while outer_loops == 0 || theta != 0.0
+        while theta < 2.0 * PI
         {
-            while inner_loops == 0 || phi != 0.0
+            while phi < 2.0 * PI
             {
                 let curr_draw_point: Vec<f32> = vec![
                     sphere.px + sphere.radius * theta.cos() * phi.cos(),
@@ -107,12 +108,13 @@ impl Sphere
                 points.push(curr_draw_point);
                 inner_loops = inner_loops.wrapping_add(1);
 
-                phi = (d_phi * inner_loops as f32) % PI;
+                phi = d_phi * inner_loops as f32;
             }
             inner_loops = 0;
-            outer_loops = outer_loops.wrapping_add(1);
+            phi = 0.0;
 
-            theta = (d_theta * outer_loops as f32) % PI;
+            outer_loops = outer_loops.wrapping_add(1);
+            theta = d_theta * outer_loops as f32;
         }
 
         points
@@ -145,12 +147,12 @@ impl Torus
         let mut inner_loops: u32 = 0;
         let mut phi: f32 = 0.0;
 
-        let r1 = torus.radius / 2.0; // just an alias
-        let r2 = torus.thickness / 2.0; // "
+        let r1 = torus.thickness / 2.0; // just aliases
+        let r2 = torus.radius / 2.0;
 
-        while outer_loops == 0 || theta != 0.0
+        while theta < 2.0 * PI
         {
-            while inner_loops == 0 || phi != 0.0
+            while phi < 2.0 * PI
             {
                 let curr_draw_point: Vec<f32> = vec![
                                         (r2 + r1 * theta.cos() + torus.p1) * phi.cos() - torus.p3 * phi.sin(),
@@ -161,12 +163,13 @@ impl Torus
                 points.push(curr_draw_point);
                 inner_loops = inner_loops.wrapping_add(1);
 
-                phi = (d_phi * inner_loops as f32) % PI;
+                phi = d_phi * inner_loops as f32;
             }
             inner_loops = 0;
-            outer_loops = outer_loops.wrapping_add(1);
+            phi = 0.0;
 
-            theta = (d_theta * outer_loops as f32) % PI;
+            outer_loops = outer_loops.wrapping_add(1);
+            theta = d_theta * outer_loops as f32;
         }
 
         points

@@ -15,8 +15,8 @@ pub mod vec_methods;
 
 const SCREEN_SIZE: usize = 64;
 const FPS: u8 = 60;
-const SCREEN_DISTANCE: f32 = 15.0;
-const OBJ_DISTANCE: f32 = 20.0;
+const SCREEN_DISTANCE: f32 = 25.0;
+const OBJ_DISTANCE: f32 = 30.0;
 const TEXTURE: &'static str = ".-=;+!*SX#$@";
 const LIGHT_SRC: [f32; 3] = [100.0, 100.0, 100.0];
 
@@ -31,17 +31,17 @@ fn main()
     let mut b: f32 = 0.0;
     let mut c: f32 = 0.0;
 
-    let torus: Torus = Torus::new(10.0, 2.0, 5.0, 5.0, 5.0);
-    let torus_points = Torus::get_points_to_draw(&torus, PI / 50.0, PI / 50.0);
+    let torus: Torus = Torus::new(16.0, 4.0, 3.0, 3.0, 3.0);
+    let torus_points = Torus::get_points_to_draw(&torus, PI / 100.0, PI / 100.0);
     let hedron: Tetrahedron = Tetrahedron::new(
         vec![0.0    , 10.0  , 0.0],
         vec![0.0    , -10.0 , 10.0],
         vec![-10.0  , -10.0 , -10.0],
         vec![10.0   , -10.0 , -10.0]
     );
-    let hedron_points = Tetrahedron::get_points_to_draw(&hedron, 50);
-    let shpere: Sphere = Sphere::new(15.0, 5.0, 5.0, 5.0);
-    let sphere_points = Sphere::get_points_to_draw(&shpere, PI / 50.0, PI / 50.0);
+    let hedron_points = Tetrahedron::get_points_to_draw(&hedron, 100);
+    let shpere: Sphere = Sphere::new(10.0, -5.0, 5.0, 5.0);
+    let sphere_points = Sphere::get_points_to_draw(&shpere, PI / 100.0, PI / 100.0);
     let all_points: Vec<Vec<Vec<f32>>> = vec![torus_points, hedron_points, sphere_points];
 
     let mut figure_change_counter: usize = 0;
